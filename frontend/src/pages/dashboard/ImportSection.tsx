@@ -3,7 +3,7 @@ import DOMPurify from 'dompurify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
@@ -1329,7 +1329,9 @@ export function ImportSection({ onCardsImported, studySetId }: ImportSectionProp
       const extractRes = await api.post(
         extractEndpoint,
         extractPayload,
-        headers ? { headers } : undefined,
+        headers
+          ? { headers, timeout: API_CONFIG.aiTimeout }
+          : { timeout: API_CONFIG.aiTimeout },
       );
       const text = extractRes.data.text || extractRes.data.transcript || extractRes.data.combinedText || '';
       if (!text) throw new Error('Could not extract content from the source.');
@@ -1341,7 +1343,7 @@ export function ImportSection({ onCardsImported, studySetId }: ImportSectionProp
 
       // Step 2: Generate flashcards
       setProcessing((prev) => ({ ...prev, currentStepIndex: 1, progress: 60 }));
-      const genRes = await api.post(ENDPOINTS.ai.generateFlashcards, { content: text, count });
+      const genRes = await api.post(ENDPOINTS.ai.generateFlashcards, { content: text, count }, { timeout: API_CONFIG.aiTimeout });
 
       // Step 3: Done
       setProcessing((prev) => ({ ...prev, currentStepIndex: 2, progress: 100, error: null }));

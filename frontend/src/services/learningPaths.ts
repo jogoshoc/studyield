@@ -1,5 +1,5 @@
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 
 export interface LearningStep {
   id: string;
@@ -50,7 +50,7 @@ export const learningPathsService = {
     targetLevel: string;
     availableHoursPerWeek: number;
   }): Promise<LearningPath> {
-    const res = await api.post(ENDPOINTS.learningPaths.generate, data);
+    const res = await api.post(ENDPOINTS.learningPaths.generate, data, { timeout: API_CONFIG.aiTimeout });
     return res.data;
   },
 

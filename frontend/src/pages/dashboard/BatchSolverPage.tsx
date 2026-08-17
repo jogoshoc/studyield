@@ -9,7 +9,7 @@ import { problemSolverService } from '@/services/problemSolver';
 import { useProblemSolverStore } from '@/stores/useProblemSolverStore';
 import { ArrowLeft, FileText, Upload, Play, CheckCircle, Loader2 } from 'lucide-react';
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 
 export function BatchSolverPage() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export function BatchSolverPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await api.post(ENDPOINTS.content.extract, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await api.post(ENDPOINTS.content.extract, formData, { headers: { 'Content-Type': 'multipart/form-data' }, timeout: API_CONFIG.aiTimeout });
       const content = res.data.text || res.data.content || '';
       setText(content);
       setProblems(await problemSolverService.batchExtractProblems(content));

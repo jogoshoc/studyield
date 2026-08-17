@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { Note } from '@/types';
 import { cn } from '@/lib/utils';
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 import {
   X,
   Play,
@@ -193,7 +193,7 @@ export function PresentationView({ note, onClose }: PresentationViewProps) {
         content: note.content,
         title: note.title,
         slideCount: 8,
-      });
+      }, { timeout: API_CONFIG.aiTimeout });
 
       const data = response.data;
       if (data.slides && data.slides.length > 0) {

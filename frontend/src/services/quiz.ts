@@ -1,5 +1,5 @@
 import api from './api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 import type { Quiz, QuizQuestion, QuizAttempt, QuizAttemptDetail } from '@/types';
 
 export interface GenerateQuizParams {
@@ -12,7 +12,7 @@ export interface GenerateQuizParams {
 
 export const quizService = {
   async generate(params: GenerateQuizParams): Promise<Quiz> {
-    const response = await api.post(ENDPOINTS.quiz.generate, params);
+    const response = await api.post(ENDPOINTS.quiz.generate, params, { timeout: API_CONFIG.aiTimeout });
     return response.data;
   },
 

@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { TeachBackSession, TopicEssentials, ChallengeMessage } from '@/services/teachBack';
 import { teachBackService } from '@/services/teachBack';
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 import {
   ArrowLeft,
   GraduationCap,
@@ -234,6 +234,7 @@ export function TeachBackSessionPage() {
           formData.append('file', blob, 'recording.webm');
           const res = await api.post(ENDPOINTS.content.extractAudio, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
+            timeout: API_CONFIG.aiTimeout,
           });
           const text = res.data?.text?.trim();
           if (text) setExplanation((prev) => (prev ? prev + ' ' + text : text));

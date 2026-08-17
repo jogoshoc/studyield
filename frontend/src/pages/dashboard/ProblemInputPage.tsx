@@ -7,7 +7,7 @@ import { useProblemSolverStore } from '@/stores/useProblemSolverStore';
 import { Spinner } from '@/components/ui/spinner';
 import { motion } from 'framer-motion';
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 import {
   Camera,
   Mic,
@@ -111,6 +111,7 @@ export function ProblemInputPage() {
           formData.append('file', audioBlob, 'recording.webm');
           const res = await api.post(ENDPOINTS.content.extractAudio, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
+            timeout: API_CONFIG.aiTimeout,
           });
           const transcribed = res.data?.text?.trim();
           if (transcribed) {

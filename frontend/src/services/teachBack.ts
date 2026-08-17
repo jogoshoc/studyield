@@ -1,5 +1,5 @@
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 
 export interface TeachBackEvaluation {
   overallScore: number;
@@ -44,12 +44,12 @@ export interface TopicEssentials {
 
 export const teachBackService = {
   async create(topic: string, referenceContent?: string, studySetId?: string): Promise<TeachBackSession> {
-    const res = await api.post(ENDPOINTS.teachBack.create, { topic, referenceContent, studySetId });
+    const res = await api.post(ENDPOINTS.teachBack.create, { topic, referenceContent, studySetId }, { timeout: API_CONFIG.aiTimeout });
     return res.data;
   },
 
   async createFromStudySet(studySetId: string): Promise<TeachBackSession> {
-    const res = await api.post(ENDPOINTS.teachBack.createFromStudySet, { studySetId });
+    const res = await api.post(ENDPOINTS.teachBack.createFromStudySet, { studySetId }, { timeout: API_CONFIG.aiTimeout });
     return res.data;
   },
 
@@ -74,7 +74,7 @@ export const teachBackService = {
   },
 
   async evaluate(id: string): Promise<TeachBackSession> {
-    const res = await api.post(ENDPOINTS.teachBack.evaluate(id));
+    const res = await api.post(ENDPOINTS.teachBack.evaluate(id), undefined, { timeout: API_CONFIG.aiTimeout });
     return res.data;
   },
 

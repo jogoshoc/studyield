@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 import {
   ArrowLeft,
   FileText,
@@ -945,13 +945,13 @@ function GenerateQuestionsModal({
           templateSlug: selectedTemplate,
           subject: templateSubject || 'General',
           count,
-        });
+        }, { timeout: API_CONFIG.aiTimeout });
       } else {
         response = await api.post<ExamQuestion[]>(ENDPOINTS.examClone.generate(examId), {
           count,
           difficulty,
           topics: selectedTopics.length > 0 ? selectedTopics : undefined,
-        });
+        }, { timeout: API_CONFIG.aiTimeout });
       }
       onSuccess(response.data);
     } catch (err) {

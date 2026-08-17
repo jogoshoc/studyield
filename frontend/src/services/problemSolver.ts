@@ -1,5 +1,5 @@
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 
 // Types
 export interface AgentStep {
@@ -140,7 +140,7 @@ export const problemSolverService = {
   },
 
   async solve(id: string): Promise<ProblemSession> {
-    const res = await api.post(ENDPOINTS.problemSolver.solve(id));
+    const res = await api.post(ENDPOINTS.problemSolver.solve(id), undefined, { timeout: API_CONFIG.aiTimeout });
     return res.data;
   },
 
@@ -176,6 +176,7 @@ export const problemSolverService = {
     formData.append('file', file);
     const res = await api.post(ENDPOINTS.content.extract, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: API_CONFIG.aiTimeout,
     });
     return res.data.text || res.data.content || '';
   },
@@ -220,7 +221,7 @@ export const problemSolverService = {
 
   // Practice Quiz
   async generatePracticeQuiz(id: string, count?: number): Promise<QuizQuestion[]> {
-    const res = await api.post(ENDPOINTS.problemSolver.practiceQuiz(id), { count });
+    const res = await api.post(ENDPOINTS.problemSolver.practiceQuiz(id), { count }, { timeout: API_CONFIG.aiTimeout });
     return res.data;
   },
 
@@ -236,7 +237,7 @@ export const problemSolverService = {
 
   // ELI5 / Complexity
   async explainAtLevel(id: string, level: string): Promise<{ level: string; explanation: string }> {
-    const res = await api.post(ENDPOINTS.problemSolver.explain(id), { level });
+    const res = await api.post(ENDPOINTS.problemSolver.explain(id), { level }, { timeout: API_CONFIG.aiTimeout });
     return res.data;
   },
 
@@ -266,7 +267,7 @@ export const problemSolverService = {
 
   // Batch Solve
   async batchExtractProblems(text: string): Promise<string[]> {
-    const res = await api.post(ENDPOINTS.problemSolver.batchExtract, { text });
+    const res = await api.post(ENDPOINTS.problemSolver.batchExtract, { text }, { timeout: API_CONFIG.aiTimeout });
     return res.data;
   },
 };

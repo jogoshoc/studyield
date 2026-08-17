@@ -6,7 +6,7 @@ import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { useNotesStore } from '@/stores/useNotesStore';
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 import {
   ArrowLeft,
   FileText,
@@ -92,11 +92,11 @@ export function GenerateNotePage() {
         content = text;
         title = text.split('\n')[0].substring(0, 50) || 'Untitled Note';
       } else if (sourceType === 'youtube') {
-        const res = await api.post(ENDPOINTS.content.extractYoutube, { url });
+        const res = await api.post(ENDPOINTS.content.extractYoutube, { url }, { timeout: API_CONFIG.aiTimeout });
         content = res.data.text;
         title = `YouTube Notes - ${res.data.videoId}`;
       } else if (sourceType === 'website') {
-        const res = await api.post(ENDPOINTS.content.extractWebsite, { url });
+        const res = await api.post(ENDPOINTS.content.extractWebsite, { url }, { timeout: API_CONFIG.aiTimeout });
         content = res.data.text;
         title = res.data.title || 'Website Notes';
       } else if (sourceType === 'pdf' && file) {
@@ -104,6 +104,7 @@ export function GenerateNotePage() {
         formData.append('file', file);
         const res = await api.post(ENDPOINTS.content.extract, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          timeout: API_CONFIG.aiTimeout,
         });
         content = res.data.text;
         title = file.name.replace(/\.[^/.]+$/, '') || 'PDF Notes';
@@ -112,6 +113,7 @@ export function GenerateNotePage() {
         formData.append('file', file);
         const res = await api.post(ENDPOINTS.content.extractAudio, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          timeout: API_CONFIG.aiTimeout,
         });
         content = res.data.text;
         title = file.name.replace(/\.[^/.]+$/, '') || 'Audio Transcription';
@@ -120,6 +122,7 @@ export function GenerateNotePage() {
         formData.append('files', file);
         const res = await api.post(ENDPOINTS.content.extractHandwriting, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          timeout: API_CONFIG.aiTimeout,
         });
         content = res.data.combinedText || res.data.texts?.[0]?.text || '';
         title = 'Handwritten Notes';
@@ -139,7 +142,7 @@ export function GenerateNotePage() {
       const summaryRes = await api.post(ENDPOINTS.ai.summarize, {
         content: content.substring(0, 10000),
         type: 'comprehensive',
-      });
+      }, { timeout: API_CONFIG.aiTimeout });
 
       const summary = summaryRes.data.summary || content.substring(0, 300);
 

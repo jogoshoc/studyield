@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import api from '@/services/api';
-import { ENDPOINTS } from '@/config/api';
+import { API_CONFIG, ENDPOINTS } from '@/config/api';
 import { ImportSection } from './ImportSection';
 import { ClozeEditor } from '@/components/ClozeEditor';
 import { ImageOcclusionEditor } from '@/components/ImageOcclusionEditor';
@@ -210,7 +210,7 @@ export const FlashcardEditor = forwardRef<FlashcardEditorRef, FlashcardEditorPro
         if (aiDifficulty === 'easy') content += '\n\n[Instruction: Keep questions simple, suitable for beginners.]';
         if (aiDifficulty === 'hard') content += '\n\n[Instruction: Make questions challenging, requiring deep understanding.]';
 
-        const res = await api.post(ENDPOINTS.ai.generateFlashcards, { content, count: aiCount });
+        const res = await api.post(ENDPOINTS.ai.generateFlashcards, { content, count: aiCount }, { timeout: API_CONFIG.aiTimeout });
         const generated: DraftCard[] = res.data.flashcards.map((c: { front: string; back: string }) => ({
           id: uid(), front: c.front, back: c.back, type: 'standard' as FlashcardType, source: 'ai' as const, selected: false,
         }));
