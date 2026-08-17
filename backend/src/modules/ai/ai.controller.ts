@@ -93,12 +93,28 @@ Output format: Return a JSON object with a "flashcards" array containing objects
         { temperature: 0.7, maxTokens: 4000 },
       );
 
-      return {
-        flashcards: result.flashcards.slice(0, count).map((card) => ({
+      const validFlashcards = (result.flashcards || [])
+        .filter(
+          (card): card is GeneratedFlashcard =>
+            card &&
+            typeof card.front === 'string' &&
+            card.front.trim().length > 0 &&
+            typeof card.back === 'string' &&
+            card.back.trim().length > 0,
+        )
+        .slice(0, count)
+        .map((card) => ({
           front: card.front.trim(),
           back: card.back.trim(),
-        })),
-      };
+        }));
+
+      if (validFlashcards.length === 0) {
+        throw new BadRequestException(
+          'AI did not return valid flashcards. Please try again.',
+        );
+      }
+
+      return { flashcards: validFlashcards };
     } catch (error: unknown) {
       const err = error as Error;
       this.logger.error(`Flashcard generation failed: ${err.message}`, err.stack);
@@ -233,12 +249,27 @@ Output format: Return a JSON object with a "flashcards" array containing objects
         { temperature: 0.7, maxTokens: 4000 },
       );
 
-      return {
-        flashcards: result.flashcards.map((card) => ({
+      const validFlashcards = (result.flashcards || [])
+        .filter(
+          (card): card is GeneratedFlashcard =>
+            card &&
+            typeof card.front === 'string' &&
+            card.front.trim().length > 0 &&
+            typeof card.back === 'string' &&
+            card.back.trim().length > 0,
+        )
+        .map((card) => ({
           front: card.front.trim(),
           back: card.back.trim(),
-        })),
-      };
+        }));
+
+      if (validFlashcards.length === 0) {
+        throw new BadRequestException(
+          'AI did not return valid flashcards. Please try again.',
+        );
+      }
+
+      return { flashcards: validFlashcards };
     } catch {
       throw new BadRequestException('Failed to adjust flashcards. Please try again.');
     }

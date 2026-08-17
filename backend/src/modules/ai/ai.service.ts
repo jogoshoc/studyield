@@ -264,8 +264,19 @@ export class AiService implements OnModuleInit {
       else if (content.startsWith('```')) content = content.slice(3);
       if (content.endsWith('```')) content = content.slice(0, -3);
 
-      return JSON.parse(content.trim()) as T;
+      // Extract the first JSON object/array from the response, ignoring any
+      // surrounding text that free models sometimes add before/after the JSON.
+      content = content.trim();
+      const jsonStart = content.indexOf('{');
+      const jsonEnd = content.lastIndexOf('}');
+      if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
+        this.logger.error(`Failed to parse JSON response: ${response.content}`);
+        throw new BadRequestException('Failed to parse AI response as JSON');
+      }
+
+      return JSON.parse(content.slice(jsonStart, jsonEnd + 1)) as T;
     } catch (error) {
+      if (error instanceof BadRequestException) throw error;
       this.logger.error(`Failed to parse JSON response: ${response.content}`);
       throw new BadRequestException('Failed to parse AI response as JSON');
     }
