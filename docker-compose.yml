@@ -105,12 +105,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=/api
     container_name: studyield-frontend
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-5189}:80"
     environment:
-      - VITE_API_URL=http://localhost:${BACKEND_PORT:-3010}
+      - VITE_API_URL=/api
     depends_on:
       - backend
 
