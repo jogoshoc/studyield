@@ -13,9 +13,9 @@ async function bootstrap() {
     rawBody: true, // Required for Stripe webhooks
   });
 
-  // Increase payload size limit to 50MB
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+  // Increase payload size limit to 100MB (matches nginx client_max_body_size)
+  app.use(bodyParser.json({ limit: '100mb' }));
+  app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
   const configService = app.get(ConfigService);
 

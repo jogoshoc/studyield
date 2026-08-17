@@ -48,7 +48,7 @@ const ALLOWED_AUDIO_TYPES = [
   'audio/flac',
   'audio/webm',
 ];
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const MAX_AUDIO_FILE_SIZE = 50 * 1024 * 1024; // 50MB for audio
 
 @ApiTags('Content')
