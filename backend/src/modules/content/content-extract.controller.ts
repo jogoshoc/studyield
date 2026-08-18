@@ -20,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { AiService } from '../ai/ai.service';
-import pdfParse from 'pdf-parse';
+import { extractPdfText } from '../../common/utils/pdf.util';
 import * as cheerio from 'cheerio';
 import { YoutubeTranscript } from 'youtube-transcript';
 import ytdl from '@distube/ytdl-core';
@@ -109,8 +109,7 @@ export class ContentExtractController {
     file: Express.Multer.File,
   ): Promise<{ text: string; mimeType: string }> {
     try {
-      const data = await pdfParse(file.buffer);
-      const text = data.text.trim();
+      const text = await extractPdfText(file.buffer);
 
       if (!text) {
         throw new BadRequestException(

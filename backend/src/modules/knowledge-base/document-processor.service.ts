@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import pdfParse from 'pdf-parse';
 import * as mammoth from 'mammoth';
 import { StorageService } from '../storage/storage.service';
+import { extractPdfText } from '../../common/utils/pdf.util';
 
 export interface ProcessedDocument {
   text: string;
@@ -34,15 +34,12 @@ export class DocumentProcessorService {
 
   private async processPdf(buffer: Buffer): Promise<ProcessedDocument> {
     try {
-      const data = await pdfParse(buffer);
+      const text = await extractPdfText(buffer);
 
       return {
-        text: data.text,
-        pageCount: data.numpages,
-        metadata: {
-          info: data.info,
-          version: data.version,
-        },
+        text,
+        pageCount: 0,
+        metadata: {},
       };
     } catch (error) {
       this.logger.error('PDF processing failed', error);

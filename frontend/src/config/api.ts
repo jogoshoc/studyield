@@ -77,6 +77,7 @@ export const ENDPOINTS = {
     get: (id: string) => `/chat/conversations/${id}`,
     messages: (id: string) => `/chat/conversations/${id}/messages`,
     send: (id: string) => `/chat/conversations/${id}/messages`,
+    sendWithFiles: (id: string) => `/chat/conversations/${id}/messages/upload`,
     stream: (id: string) => `/chat/conversations/${id}/messages/stream`,
     update: (id: string) => `/chat/conversations/${id}`,
     delete: (id: string) => `/chat/conversations/${id}`,

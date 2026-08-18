@@ -6,11 +6,11 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import pdf = require('pdf-parse');
 import { DatabaseService } from '../database/database.service';
 import { AiService, ChatMessage } from '../ai/ai.service';
 import { KnowledgeBaseService } from '../knowledge-base/knowledge-base.service';
 import { StorageService } from '../storage/storage.service';
+import { extractPdfText } from '../../common/utils/pdf.util';
 
 export interface Conversation {
   id: string;
@@ -253,8 +253,7 @@ export class ChatService {
       // Handle PDF files
       if (mimeType === 'application/pdf') {
         try {
-          const pdfData = await pdf(file.buffer);
-          extractedText = pdfData.text;
+          extractedText = await extractPdfText(file.buffer);
           this.logger.log(
             `Extracted ${extractedText.length} characters from PDF: ${file.originalname}`,
           );

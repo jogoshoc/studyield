@@ -4,7 +4,7 @@ import { DatabaseService } from '../database/database.service';
 import { AiService } from '../ai/ai.service';
 import { StorageService } from '../storage/storage.service';
 import { QueueService } from '../queue/queue.service';
-import pdfParse from 'pdf-parse';
+import { extractPdfText } from '../../common/utils/pdf.util';
 
 export interface ExamClone {
   id: string;
@@ -177,11 +177,11 @@ export class ExamCloneService {
   private async extractTextFromPDF(fileBuffer: Buffer): Promise<string> {
     const parseAttempts = [
       // Attempt 1: Default options
-      { options: {}, description: 'default options' },
+      { description: 'default options' },
       // Attempt 2: With max pages limit
-      { options: { max: 50 }, description: 'max 50 pages' },
+      { description: 'max 50 pages' },
       // Attempt 3: Minimal options
-      { options: { pagerender: null }, description: 'no page render' },
+      { description: 'no page render' },
     ];
 
     for (let i = 0; i < parseAttempts.length; i++) {
@@ -190,10 +190,9 @@ export class ExamCloneService {
         this.logger.debug(
           `Attempting PDF parse with ${attempt.description} (attempt ${i + 1}/${parseAttempts.length})`,
         );
-        const pdfData = await pdfParse(fileBuffer, attempt.options);
-        const text = pdfData.text.trim();
+        const text = await extractPdfText(fileBuffer);
 
-        if (text.length > 0) {
+        if (text.trim().length > 0) {
           this.logger.log(
             `PDF parsed successfully with ${attempt.description}: ${text.length} chars`,
           );

@@ -346,6 +346,39 @@ export function ChatPage() {
     setMessages((prev) => [...prev, userMsg]);
     setTimeout(() => scrollToBottom(), 50);
 
+    // If files are attached, send them via the upload endpoint
+    if (attachedFiles.length > 0) {
+      const filesToSend = [...attachedFiles];
+      setAttachedFiles([]);
+      try {
+        const assistantMessage = await chatService.sendMessageWithFiles(
+          convId,
+          text,
+          filesToSend
+        );
+        setMessages((prev) => [...prev, assistantMessage]);
+        if (messages.length === 0) {
+          loadConversations();
+        }
+      } catch (err: unknown) {
+        const fallbackMsg: Message = {
+          id: `msg-${Date.now()}`,
+          conversationId: convId,
+          role: 'assistant',
+          content: (err as Error)?.message || t('chat.errorFallback'),
+          citations: [],
+          metadata: {},
+          createdAt: new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, fallbackMsg]);
+      } finally {
+        setIsSending(false);
+        abortRef.current = null;
+        scrollToBottom();
+      }
+      return;
+    }
+
     // Stream response
     setStreamingContent('');
     setStreamingCitations([]);

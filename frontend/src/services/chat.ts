@@ -1,5 +1,5 @@
 import api from './api';
-import { ENDPOINTS } from '@/config/api';
+import { ENDPOINTS, API_CONFIG } from '@/config/api';
 
 export interface Citation {
   chunkId: string;
@@ -64,6 +64,21 @@ export const chatService = {
 
   async sendMessage(conversationId: string, content: string): Promise<Message> {
     const response = await api.post(ENDPOINTS.chat.send(conversationId), { content });
+    return response.data;
+  },
+
+  async sendMessageWithFiles(
+    conversationId: string,
+    content: string,
+    files: File[]
+  ): Promise<Message> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+    formData.append('content', content);
+    const response = await api.post(ENDPOINTS.chat.sendWithFiles(conversationId), formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: API_CONFIG.aiTimeout,
+    });
     return response.data;
   },
 
